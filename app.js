@@ -12,7 +12,9 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+
+// DIST de VUE Frontend
+app.use(express.static(path.join(__dirname, '../Proyecto_Final_Antonio/dist')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
