@@ -31,8 +31,28 @@ router.post('/login', async (req, res, next) => {
   }
 });
 
-// router.post('/register', async (req, res, next) => {
-//   const password_admin = await bcryptjs.hash(password, parseInt(process.env.NUM_SALTOS))
-// }
+router.post('/register', async (req, res, next) => {
+  
+  try {
+    const { email, password, nombre } = req.body;
+    // console.log('datos--->', email, password)
+    const password_hashed = await bcryptjs.hash(password, parseInt(process.env.NUM_SALTOS))
+
+    const newUser = await UsuarioModel.create({
+      email: email,
+      password: password_hashed,
+      nombre: nombre,
+      foto_perfil: '',
+      medallas: '',
+      isAdmin: false
+    });
+
+    return res.status(200).json({ mensaje: 'Usuario creado', estado: 'success' });
+    
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({ mensaje: 'Error en registro' });
+  }
+});
 
 module.exports = router;
