@@ -36,6 +36,12 @@ router.post('/register', async (req, res, next) => {
   try {
     const { email, password, nombre } = req.body;
     // console.log('datos--->', email, password)
+
+    const encontrado = await UsuarioModel.findOne({ where: { email } });
+    if (encontrado) {
+      return res.status(200).json({ mensaje: 'Este email ya posee una cuenta', estado: 'failed' });
+    }
+
     const password_hashed = await bcryptjs.hash(password, parseInt(process.env.NUM_SALTOS))
 
     const newUser = await UsuarioModel.create({
