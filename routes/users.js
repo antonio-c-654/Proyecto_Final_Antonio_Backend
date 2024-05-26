@@ -61,4 +61,28 @@ router.post('/register', async (req, res, next) => {
   }
 });
 
+router.put('/perfil/settings', async (req, res, next) => {
+  
+  try {
+    const { id, pfp_actual, password } = req.body;
+
+    const encontrado = await UsuarioModel.findOne({ where: { id } });
+    if (!encontrado) {
+      return res.status(200).json({ mensaje: 'no se ha encontrado el usuario [settings]', estado: 'failed' });
+    }
+
+    // si hay nueva contraseña la cambia
+    if (password != null) {
+      await UsuarioModel.update({ password }, { where: { id } })
+    }
+    // actualizar la foto
+    await UsuarioModel.update({ foto_perfil: pfp_actual }, { where: { id } });
+
+    return res.status(200).json({ mensaje: 'Ajustes actualizados', estado: 'success' });
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({ mensaje: 'Error en ajustes' });
+  }
+});
+
 module.exports = router;
