@@ -44,12 +44,12 @@ router.post('/register', async (req, res, next) => {
 
     const password_hashed = await bcryptjs.hash(password, parseInt(process.env.NUM_SALTOS))
 
-    const newUser = await UsuarioModel.create({
+    await UsuarioModel.create({
       email: email,
       password: password_hashed,
       nombre: nombre,
-      foto_perfil: '',
-      medallas: '',
+      foto_perfil: '/profile_img/pfp_1_burger.jpg',
+      medallas: 'medal_1',
       isAdmin: false
     });
 
