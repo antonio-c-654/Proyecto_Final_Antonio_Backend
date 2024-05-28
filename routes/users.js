@@ -13,7 +13,6 @@ router.post('/login', async (req, res, next) => {
 
   try {
     const { email, password } = req.body;
-    // console.log('datos--->', email, password)
 
     const encontrado = await UsuarioModel.findOne({ where: { email } });
     if (!encontrado) {
@@ -21,7 +20,7 @@ router.post('/login', async (req, res, next) => {
     }
 
     const comparar_pass = await bcryptjs.compare(password, encontrado.password) // comparar hash
-    // console.log(encontrado.email, ':', comparar_pass)
+
     if (comparar_pass) {
       return res.status(200).json({ mensaje: 'Inicio de sesión correcto', user: encontrado, estado: 'success' });
     } else {
@@ -38,7 +37,6 @@ router.post('/register', async (req, res, next) => {
   
   try {
     const { email, password, nombre } = req.body;
-    // console.log('datos--->', email, password)
 
     const encontrado = await UsuarioModel.findOne({ where: { email } });
     if (encontrado) {
