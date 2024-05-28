@@ -30,6 +30,10 @@ const UsuarioModel = sequelize.define('Usuario', {
       type: DataTypes.TINYINT,
       allowNull: false,
     },
+    forgotToken: {
+      type: DataTypes.STRING(700),
+      allowNull: false,
+    },
 }, 
 {
     tableName: 'usuarios', // nombre tabla en BD

@@ -5,6 +5,8 @@ const dotenv = require('dotenv')
 dotenv.config() // cargar variables de entorno
 const bcryptjs = require('bcryptjs')
 const { UsuarioModel } = require('../models/user.js');
+const enviarMail = require('../services/mailService');
+const { crearToken, comprobarToken } = require('../services/tokenService')
 
 
 router.post('/login', async (req, res, next) => {
@@ -31,6 +33,7 @@ router.post('/login', async (req, res, next) => {
   }
 });
 
+
 router.post('/register', async (req, res, next) => {
   
   try {
@@ -43,6 +46,7 @@ router.post('/register', async (req, res, next) => {
     }
 
     const password_hashed = await bcryptjs.hash(password, parseInt(process.env.NUM_SALTOS))
+    const new_token = crearToken(email)
 
     await UsuarioModel.create({
       email: email,
@@ -50,7 +54,8 @@ router.post('/register', async (req, res, next) => {
       nombre: nombre,
       foto_perfil: '/profile_img/pfp_1_burger.jpg',
       medallas: 'medal_1',
-      isAdmin: false
+      isAdmin: false,
+      forgotToken: new_token
     });
 
     return res.status(200).json({ mensaje: 'Usuario creado', estado: 'success' });
@@ -61,6 +66,7 @@ router.post('/register', async (req, res, next) => {
   }
 });
 
+
 router.put('/perfil/settings', async (req, res, next) => {
   
   try {
@@ -68,7 +74,7 @@ router.put('/perfil/settings', async (req, res, next) => {
 
     const encontrado = await UsuarioModel.findOne({ where: { id } });
     if (!encontrado) {
-      return res.status(200).json({ mensaje: 'no se ha encontrado el usuario [settings]', estado: 'failed' });
+      return res.status(200).json({ mensaje: 'no se ha encontrado el usuario', estado: 'failed' });
     }
 
     // si hay nueva contraseña la cambia
@@ -84,5 +90,73 @@ router.put('/perfil/settings', async (req, res, next) => {
     return res.status(500).json({ mensaje: 'Error en ajustes' });
   }
 });
+
+
+router.post('/forgotPass', async (req, res, next) => {
+  
+  try {
+    const { destinatario } = req.body;
+    
+    const encontrado = await UsuarioModel.findOne({ where: { email: destinatario } });
+    if (!encontrado) {
+      return res.status(200).json({ mensaje: 'Prueba con otro correo', estado: 'failed' });
+    }
+
+    console.log('---> Enviando token...')
+    let asunto = 'Recuperación contraseña'
+    let mensaje = 'Aqui tienes tu token de recuperación:  ' + encontrado.forgotToken
+    await enviarMail(destinatario, asunto, mensaje)
+
+    return res.status(200).json({ mensaje: 'Correo enviado!', estado: 'success' });
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({ mensaje: 'Error al enviar mail' });
+  }
+});
+
+
+router.post('/verifyToken', async (req, res, next) => {
+  
+  try {
+    const { token } = req.body;
+
+    let info_token = comprobarToken(token)
+    if(!info_token){
+      return res.status(200).json({ mensaje: 'Formato del token no válido', estado: 'failed' });
+    }
+
+    const encontrado = await UsuarioModel.findOne({ where: { email: info_token.email } });
+    if (!encontrado) {
+      return res.status(200).json({ mensaje: 'Token no válido', estado: 'failed' });
+    }
+
+    return res.status(200).json({ mensaje: 'Puedes cambiar contraseña!', estado: 'success' });
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({ mensaje: 'Error verifyToken' });
+  }
+});
+
+
+router.post('/resetPass', async (req, res, next) => {
+  
+  try {
+    const { new_passw, user_mail } = req.body;
+
+    const new_password_hashed = await bcryptjs.hash(new_passw, parseInt(process.env.NUM_SALTOS))
+
+    // cambiar password al usuario
+    await UsuarioModel.update(
+      { password: new_password_hashed },
+      { where: { email: user_mail } }
+    )
+
+    return res.status(200).json({ mensaje: 'Contraseña cambiada!', estado: 'success' });
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({ mensaje: 'Error resetPass' });
+  }
+});
+
 
 module.exports = router;
