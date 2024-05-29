@@ -3,14 +3,23 @@ const { Sequelize } = require('sequelize');
 
 // Parametros conexion
 const sequelize = new Sequelize(
-  process.env.DB_DATABASE, 
-  process.env.DB_USER, 
-  process.env.DB_PASSWORD,
+  process.env.MYSQL_ADDON_DB, 
+  process.env.MYSQL_ADDON_USER, 
+  process.env.MYSQL_ADDON_PASSWORD,
   {
-    host: process.env.DB_HOST,
+    host: process.env.MYSQL_ADDON_HOST,
     dialect: "mysql",
   }
 );
+// const sequelize = new Sequelize(
+//   process.env.DB_DATABASE, 
+//   process.env.DB_USER, 
+//   process.env.DB_PASSWORD,
+//   {
+//     host: process.env.DB_HOST,
+//     dialect: "mysql",
+//   }
+// );
 
 // Probar conexion
 const db = async () => {
