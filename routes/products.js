@@ -21,9 +21,9 @@ router.get('/allProducts', async (req, res, next) => {
 router.post('/cart/sendBill', async (req, res, next) => {
 
   try {
-    const { destinatario, pago_total } = req.body;
+    const { destinatario, direccion, pago_total } = req.body;
     let asunto = 'Resumen de compra'
-    let mensaje = 'Gracias por comprar en Arleburger, la factura asciende a ' + pago_total + '€.'
+    let mensaje = 'Gracias por comprar en Arleburger, la factura asciende a ' + pago_total + '€. Se lo enviaremos a la siguiente dirección: ' + direccion
 
     await enviarMail(destinatario, asunto, mensaje)
 
