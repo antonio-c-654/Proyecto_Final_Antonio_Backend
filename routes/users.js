@@ -9,6 +9,7 @@ const enviarMail = require('../services/mailService');
 const { crearToken, comprobarToken } = require('../services/tokenService')
 
 
+// Iniciar sesion
 router.post('/login', async (req, res, next) => {
 
   try {
@@ -33,6 +34,7 @@ router.post('/login', async (req, res, next) => {
 });
 
 
+// Registro
 router.post('/register', async (req, res, next) => {
   
   try {
@@ -65,6 +67,7 @@ router.post('/register', async (req, res, next) => {
 });
 
 
+// Modificar ajustes del perfil del usuario
 router.put('/perfil/settings', async (req, res, next) => {
   
   try {
@@ -90,6 +93,7 @@ router.put('/perfil/settings', async (req, res, next) => {
 });
 
 
+// Recuperacion de contraseña, envio de token
 router.post('/forgotPass', async (req, res, next) => {
   
   try {
@@ -113,6 +117,7 @@ router.post('/forgotPass', async (req, res, next) => {
 });
 
 
+// Verificacion del token
 router.post('/verifyToken', async (req, res, next) => {
   
   try {
@@ -136,6 +141,7 @@ router.post('/verifyToken', async (req, res, next) => {
 });
 
 
+// Cambio de la nueva contraseña
 router.post('/resetPass', async (req, res, next) => {
   
   try {

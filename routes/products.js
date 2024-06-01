@@ -5,6 +5,7 @@ const { ProductoModel } = require('../models/product.js');
 const enviarMail = require('../services/mailService');
 
 
+// Obtener todos los productos
 router.get('/allProducts', async (req, res, next) => {
 
     try {
@@ -18,6 +19,7 @@ router.get('/allProducts', async (req, res, next) => {
 });
 
 
+// Enviar factura al correo
 router.post('/cart/sendBill', async (req, res, next) => {
 
   try {
